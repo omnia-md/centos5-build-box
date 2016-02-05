@@ -1,8 +1,7 @@
 FROM phusion/holy-build-box-64
 
-# Install TeX, CUDA 7.0, AMD APP SDK 3.0
+# Install TeX, CUDA 7.5, AMD APP SDK 3.0
 
-#ADD http://developer.download.nvidia.com/compute/cuda/7_0/Prod/local_installers/rpmdeb/cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm .
 ADD http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm .
 ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
 ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm .
@@ -17,6 +16,26 @@ ADD texlive.profile .
 RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
     rm -rf epel-release-5-4.noarch.rpm && \
     yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender &&  \
+    # Install AMD APP SDK
+    tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
+    ./AMD-APP-SDK-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
+    # Install minimal CUDA components (this may be more than needed)
+    rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-misc-headers-7-5-7.5-18.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-gl-352.39-1.el6.x86_64.rpm && \
+    ls -ltr /usr && \
+    ls -ltr /usr/local && \
+    ls -ltr /usr/local/include && \
+    ls -ltr /usr/local/cuda* && \
+    #ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
+    yum clean -y --quiet expire-cache && \
+    yum clean -y --quiet all && \
+    #rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
+    rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/ && \
+    # Install TeXLive
     tar -xzf install-tl-unx.tar.gz && \
     cd install-tl-* &&  ./install-tl -profile /texlive.profile && cd - && \
     rm -rf install-tl-unx.tar.gz install-tl-* texlive.profile && \
@@ -24,23 +43,9 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
           cmap fancybox titlesec framed fancyvrb threeparttable \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
           xstring && \
-    rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
-    #yum install -y --quiet cuda-core-7-0-7.0-28.x86_64 cuda-cufft-dev-7-0-7.0-28.x86_64 cuda-cudart-dev-7-0-7.0-28.x86_64 && \
-    yum install -y --quiet cuda-core-7-5-7.5-18.x86_64.rpm cuda-cufft-dev-7-5-7.5-18.x86_64.rpm cuda-cudart-dev-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-libs-346.46-1.el6.x86_64.rpm && \
-    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-devel-346.46-1.el6.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-libs-352.39-1.el6.x86_64.rpm && \
-    ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
-    yum clean -y --quiet expire-cache && \
-    yum clean -y --quiet all && \
-    #rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
-    rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/ && \
-    tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
-    ./AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
+    # Clean up
     rm -rf  /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh && \
     rm -rf /opt/AMDAPPSDK-3.0/samples/
 
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
 ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
-
-    #rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \ # BROKEN
