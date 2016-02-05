@@ -4,7 +4,7 @@ FROM phusion/holy-build-box-64
 
 #ADD http://developer.download.nvidia.com/compute/cuda/7_0/Prod/local_installers/rpmdeb/cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm .
 ADD http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm .
-ADD http://jenkins.choderalab.org/userContent/AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 .
+ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
 ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm .
 ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
 ADD texlive.profile .
@@ -32,7 +32,7 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
     yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all && \
     rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
-    tar xjf AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 && \
+    tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     ./AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
     rm -rf  /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh && \
     rm -rf /opt/AMDAPPSDK-3.0/samples/
