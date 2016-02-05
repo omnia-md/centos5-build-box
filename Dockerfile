@@ -25,13 +25,16 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
           xstring && \
     rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
-    yum install -y --quiet cuda-core-7-0-7.0-28.x86_64 cuda-cufft-dev-7-0-7.0-28.x86_64 cuda-cudart-dev-7-0-7.0-28.x86_64 && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-libs-346.46-1.el6.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-devel-346.46-1.el6.x86_64.rpm && \
-    ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.0/include/ && \
+    #yum install -y --quiet cuda-core-7-0-7.0-28.x86_64 cuda-cufft-dev-7-0-7.0-28.x86_64 cuda-cudart-dev-7-0-7.0-28.x86_64 && \
+    yum install -y --quiet cuda-core-7-5-7.5-18.x86_64.rpm cuda-cufft-dev-7-5-7.5-18.x86_64.rpm cuda-cudart-dev-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-libs-346.46-1.el6.x86_64.rpm && \
+    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-0-local/xorg-x11-drv-nvidia-devel-346.46-1.el6.x86_64.rpm && \
+    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-libs-352.39-1.el6.x86_64.rpm && \
+    ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
     yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all && \
-    rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
+    #rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
+    rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/ && \
     tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     ./AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
     rm -rf  /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh && \
@@ -39,3 +42,5 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
 
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
 ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
+
+    #rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \ # BROKEN
