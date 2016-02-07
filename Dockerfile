@@ -34,9 +34,8 @@ RUN rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
     #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
     #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-gl-352.39-1.el6.x86_64.rpm && \
     #ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
-    yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm
+    yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
     rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/
-
 
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
