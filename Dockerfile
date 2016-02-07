@@ -2,50 +2,54 @@ FROM phusion/holy-build-box-64
 
 # Install TeX, CUDA 7.5, AMD APP SDK 3.0
 
-ADD http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm .
-ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
-ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm .
-ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
-ADD texlive.profile .
-
 # CUDA requires dkms libvdpau
 # TeX installation requires wget
 # The other TeX packages installed with `tlmgr install` are required for OpenMM's sphinx docs
 # libXext libSM libXrender are required for matplotlib to work
 
+ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm .
 RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
-    rm -rf epel-release-5-4.noarch.rpm && \
-    yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender &&  \
-    # Install AMD APP SDK
-    tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
+    rm -rf epel-release-5-4.noarch.rpm
+
+RUN  yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
+
+# Install AMD APP SDK
+ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
+RUN tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     ./AMD-APP-SDK-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
-    # Install minimal CUDA components (this may be more than needed)
-    rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-misc-headers-7-5-7.5-18.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
-    rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-gl-352.39-1.el6.x86_64.rpm && \
-    ls -ltr /usr && \
-    ls -ltr /usr/local && \
-    ls -ltr /usr/local/include && \
-    ls -ltr /usr/local/cuda* && \
+    rm -f AMD-APP-SDK-v3.0.130.135-GA-linux64.sh AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
+    rm -rf /opt/AMDAPPSDK-3.0/samples/
+ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
+
+# Install minimal CUDA components (this may be more than needed)
+ADD http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm .
+RUN rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-license-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-misc-headers-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-core-7-5-7.5-18.x86_64.rpm  && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-cudart-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-cudart-dev-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
+    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
+    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-gl-352.39-1.el6.x86_64.rpm && \
     #ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
-    yum clean -y --quiet expire-cache && \
-    yum clean -y --quiet all && \
-    #rm -rf /cuda-repo-rhel6-7-0-local-7.0-28.x86_64.rpm /var/cuda-repo-7-0-local/*.rpm /var/cache/yum/cuda-7-0-local/ && \
-    rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/ && \
+    yum --nogpgcheck localinstall /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm
+    rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/
+
+
+RUN yum clean -y --quiet expire-cache && \
+    yum clean -y --quiet all
+
     # Install TeXLive
-    tar -xzf install-tl-unx.tar.gz && \
+ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
+ADD texlive.profile .
+RUN tar -xzf install-tl-unx.tar.gz && \
     cd install-tl-* &&  ./install-tl -profile /texlive.profile && cd - && \
     rm -rf install-tl-unx.tar.gz install-tl-* texlive.profile && \
     /usr/local/texlive/2015/bin/x86_64-linux/tlmgr install \
           cmap fancybox titlesec framed fancyvrb threeparttable \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
-          xstring && \
-    # Clean up
-    rm -rf  /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.tar.bz2 /AMD-APP-SDK-linux-v3.0.130.135-GA-linux64.sh && \
-    rm -rf /opt/AMDAPPSDK-3.0/samples/
-
+          xstring
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
-ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
+
