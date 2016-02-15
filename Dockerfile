@@ -24,23 +24,14 @@ ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
 # Install minimal CUDA components (this may be more than needed)
 ADD http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm .
 RUN rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-license-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-misc-headers-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-core-7-5-7.5-18.x86_64.rpm  && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-cudart-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-cudart-dev-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet -i /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
-    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
-    #rpm --quiet --nodeps -Uvh /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-gl-352.39-1.el6.x86_64.rpm && \
-    #ln -s /usr/include/nvidia/GL/  /usr/local/cuda-7.5/include/ && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
+    yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
     rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/
 
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
 
-    # Install TeXLive
+# Install TeXLive
 ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
 ADD texlive.profile .
 RUN tar -xzf install-tl-unx.tar.gz && \
