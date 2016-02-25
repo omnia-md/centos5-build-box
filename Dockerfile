@@ -11,7 +11,7 @@ ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.
 RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
     rm -rf epel-release-5-4.noarch.rpm
 
-RUN  yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
+RUN  yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender 
 
 # Install AMD APP SDK
 ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
@@ -27,7 +27,8 @@ RUN rpm --quiet -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-minimal-build-7-5-7.5-18.x86_64.rpm && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-cufft-dev-7-5-7.5-18.x86_64.rpm && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-driver-dev-7-5-7.5-18.x86_64.rpm && \
-    #yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-drivers-352.39-0.x86_64.rpm && \
+    rpm --quiet -i --nodeps --nomd5 /var/cuda-repo-7-5-local/xorg-x11-drv-nvidia-devel-352.39-1.el6.x86_64.rpm && \
+    yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-7-5-local/cuda-driver-dev-7-5-7.5-18.x86_64.rpm && \
     rm -rf /cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm /var/cuda-repo-7-5-local/*.rpm /var/cache/yum/cuda-7-5-local/
 
 RUN yum clean -y --quiet expire-cache && \
