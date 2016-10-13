@@ -11,10 +11,11 @@ ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.
 RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
     rm -rf epel-release-5-4.noarch.rpm
 
-RUN  yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender 
+RUN  yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
 
 # Install AMD APP SDK
-ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
+#ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
+ADD http://s3.amazonaws.com/omnia-ci/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
 RUN tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     ./AMD-APP-SDK-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
     rm -f AMD-APP-SDK-v3.0.130.135-GA-linux64.sh AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
@@ -46,4 +47,3 @@ RUN tar -xzf install-tl-unx.tar.gz && \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
           xstring
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
-
