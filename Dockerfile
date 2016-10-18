@@ -13,6 +13,23 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
 
 RUN yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
 
+# Install clang 3.8.1
+RUN yum install -y --quiet xz
+ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz .
+RUN xzcat llvm-3.8.1.src.tar.xz | tar xf -
+ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz .
+RUN xzcat cfe-3.8.1.src.tar.xz | tar xf - && mv cfe-3.8.1.src llvm-3.8.1.src/tools/clang
+RUN source /hbb_shlib/activate && \
+    mkdir llvm-build && cd llvm-build && \
+    cmake ../llvm-3.8.1.src/ \
+        -DCMAKE_INSTALL_PREFIX=/opt/clang \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DLLVM_TARGETS_TO_BUILD=host \
+        -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
+        && \
+    make -j 8 && \
+    make install
+
 # Disable PYTHONPATH
 ENV PYTHONPATH=""
 
@@ -23,16 +40,6 @@ RUN set -x && \
 ENV PATH=/opt/rh/devtoolset-2/root/usr/bin:/opt/rh/autotools-latest/root/usr/bin:/anaconda/bin:$PATH
 RUN conda config --add channels omnia && \
     conda install -yq conda-build jinja2 anaconda-client
-
-# Install clang 3.8.1
-# TODO: This is incomplete
-RUN yum install -y --quiet xz
-ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz .
-RUN source /hbb_exe/activate && \
-    xzcat llvm-3.8.1.src.tar.xz | tar xf - && \
-    mkdir llvm-build && cd llvm-build && \
-    ../llvm-3.8.1.src/configure --enable-jit --enable-targets=x86_64 --prefix=/llvm && \
-    make -j 2
 
 # Install AMD APP SDK
 #ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
