@@ -22,7 +22,7 @@ RUN set -x && \
     bash Miniconda3-latest-Linux-x86_64.sh -b -p /anaconda
 ENV PATH=/opt/rh/devtoolset-2/root/usr/bin:/opt/rh/autotools-latest/root/usr/bin:/anaconda/bin:$PATH
 RUN conda config --add channels omnia && \
-    && conda install -yq conda-build=$CONDA_BUILD jinja2 anaconda-client
+    conda install -yq conda-build jinja2 anaconda-client
 
 # Install clang 3.8.1
 # TODO: This is incomplete
