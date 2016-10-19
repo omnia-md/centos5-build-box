@@ -28,7 +28,8 @@ RUN source /opt/rh/devtoolset-2/enable && \
         -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
         && \
     make && \
-    make install
+    make install/strip
+RUN rm -rf /llvm-3.8.1.src /llvm-3.8.1.src.tar.xz /cfe-3.8.1.src.tar.xz /llvm-build
 
 # Disable PYTHONPATH
 ENV PYTHONPATH=""
@@ -40,6 +41,7 @@ RUN set -x && \
 ENV PATH=/opt/rh/devtoolset-2/root/usr/bin:/opt/rh/autotools-latest/root/usr/bin:/anaconda/bin:$PATH
 RUN conda config --add channels omnia && \
     conda install -yq conda-build jinja2 anaconda-client
+RUN rm -rf Miniconda3-latest-Linux-x86_64.sh
 
 # Install AMD APP SDK
 #ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
