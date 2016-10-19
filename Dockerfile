@@ -19,15 +19,15 @@ ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz .
 RUN xzcat llvm-3.8.1.src.tar.xz | tar xf -
 ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz .
 RUN xzcat cfe-3.8.1.src.tar.xz | tar xf - && mv cfe-3.8.1.src llvm-3.8.1.src/tools/clang
-RUN source /hbb_shlib/activate && \
+RUN source /opt/rh/devtoolset-2/enable && \
     mkdir llvm-build && cd llvm-build && \
-    cmake ../llvm-3.8.1.src/ \
+    CC=gcc CXX=g++ /hbb/bin/cmake ../llvm-3.8.1.src/ \
         -DCMAKE_INSTALL_PREFIX=/opt/clang \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_TARGETS_TO_BUILD=host \
         -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
         && \
-    make -j 8 && \
+    make && \
     make install
 
 # Disable PYTHONPATH
