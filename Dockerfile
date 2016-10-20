@@ -13,26 +13,23 @@ RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
 
 RUN yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
 
-# Disable PYTHONPATH
-ENV PYTHONPATH=""
-
-# Install miniconda
-RUN set -x && \
-    curl -s -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /anaconda
-ENV PATH=/opt/rh/devtoolset-2/root/usr/bin:/opt/rh/autotools-latest/root/usr/bin:/anaconda/bin:$PATH
-RUN conda config --add channels omnia && \
-    conda install -yq conda-build jinja2 anaconda-client
-
 # Install clang 3.8.1
-# TODO: This is incomplete
 RUN yum install -y --quiet xz
 ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz .
-RUN source /hbb_exe/activate && \
-    xzcat llvm-3.8.1.src.tar.xz | tar xf - && \
+RUN xzcat llvm-3.8.1.src.tar.xz | tar xf -
+ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz .
+RUN xzcat cfe-3.8.1.src.tar.xz | tar xf - && mv cfe-3.8.1.src llvm-3.8.1.src/tools/clang
+RUN source /opt/rh/devtoolset-2/enable && \
     mkdir llvm-build && cd llvm-build && \
-    ../llvm-3.8.1.src/configure --enable-jit --enable-targets=x86_64 --prefix=/llvm && \
-    make -j 2
+    CC=gcc CXX=g++ /hbb/bin/cmake ../llvm-3.8.1.src/ \
+        -DCMAKE_INSTALL_PREFIX=/opt/clang \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DLLVM_TARGETS_TO_BUILD=host \
+        -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
+        && \
+    make && \
+    make install/strip
+RUN rm -rf /llvm-3.8.1.src /llvm-3.8.1.src.tar.xz /cfe-3.8.1.src.tar.xz /llvm-build
 
 # Install AMD APP SDK
 #ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
