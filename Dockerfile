@@ -7,9 +7,9 @@ FROM phusion/holy-build-box-64
 # The other TeX packages installed with `tlmgr install` are required for OpenMM's sphinx docs
 # libXext libSM libXrender are required for matplotlib to work
 
-ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm .
-RUN rpm -i --quiet epel-release-5-4.noarch.rpm && \
-    rm -rf epel-release-5-4.noarch.rpm
+ADD http://download.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm /tmp
+RUN rpm -i --quiet /tmp/epel-release-5-4.noarch.rpm && \
+    rm -rf /tmp/epel-release-5-4.noarch.rpm
 
 RUN yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
 
