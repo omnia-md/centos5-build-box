@@ -14,7 +14,7 @@ RUN source /opt/rh/devtoolset-2/enable && \
     CC=gcc CXX=g++ /hbb/bin/cmake ../llvm-3.8.1.src/ \
         -DCMAKE_INSTALL_PREFIX=/opt/clang \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_TARGETS_TO_BUILD=host \
+        -DLLVM_TARGETS_TO_BUILD=X86 \
         -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
         && \
     NCORES=$(grep -c '^processor' /proc/cpuinfo) && \
