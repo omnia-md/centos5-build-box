@@ -15,10 +15,10 @@ RUN yum install -y --quiet dkms libvdpau git wget libXext libSM libXrender
 
 # Install clang 3.8.1
 RUN yum install -y --quiet xz
-ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz .
-RUN xzcat llvm-3.8.1.src.tar.xz | tar xf -
-ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz .
-RUN xzcat cfe-3.8.1.src.tar.xz | tar xf - && mv cfe-3.8.1.src llvm-3.8.1.src/tools/clang
+ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz /tmp
+RUN xzcat /tmp/llvm-3.8.1.src.tar.xz | tar xf -
+ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz /tmp
+RUN xzcat /tmp/cfe-3.8.1.src.tar.xz | tar xf - && mv cfe-3.8.1.src llvm-3.8.1.src/tools/clang
 RUN source /opt/rh/devtoolset-2/enable && \
     mkdir llvm-build && cd llvm-build && \
     CC=gcc CXX=g++ /hbb/bin/cmake ../llvm-3.8.1.src/ \
@@ -29,22 +29,22 @@ RUN source /opt/rh/devtoolset-2/enable && \
         && \
     make && \
     make install/strip
-RUN rm -rf /llvm-3.8.1.src /llvm-3.8.1.src.tar.xz /cfe-3.8.1.src.tar.xz /llvm-build
+RUN rm -rf /llvm-3.8.1.src /tmp/llvm-3.8.1.src.tar.xz /tmp/cfe-3.8.1.src.tar.xz /llvm-build
 
 # Install AMD APP SDK
 #ADD https://jenkins.choderalab.org/userContent/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
-ADD http://s3.amazonaws.com/omnia-ci/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 .
+ADD http://s3.amazonaws.com/omnia-ci/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 /tmp
 RUN pwd
 RUN ls -ltr
-RUN tar xjf AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
+RUN tar xjf /tmp/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     ./AMD-APP-SDK-v3.0.130.135-GA-linux64.sh -- -s -a yes && \
-    rm -f AMD-APP-SDK-v3.0.130.135-GA-linux64.sh AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
+    rm -f AMD-APP-SDK-v3.0.130.135-GA-linux64.sh /tmp/AMD-APP-SDKInstaller-v3.0.130.135-GA-linux64.tar.bz2 && \
     rm -rf /opt/AMDAPPSDK-3.0/samples/
 ENV OPENCL_HOME=/opt/AMDAPPSDK-3.0 OPENCL_LIBPATH=/opt/AMDAPPSDK-3.0/lib/x86_64
 
 # Install minimal CUDA components (this may be more than needed)
-ADD https://developer.nvidia.com/compute/cuda/8.0/prod/local_installers/cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64-rpm .
-RUN mv cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64-rpm cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64.rpm
+ADD https://developer.nvidia.com/compute/cuda/8.0/prod/local_installers/cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64-rpm /tmp
+RUN mv /tmp/cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64-rpm cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64.rpm
 RUN rpm --quiet -i cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64.rpm && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-8-0-local/cuda-minimal-build-8-0-8.0.44-1.x86_64.rpm && \
     yum --nogpgcheck localinstall -y --quiet /var/cuda-repo-8-0-local/cuda-cufft-dev-8-0-8.0.44-1.x86_64.rpm && \
@@ -58,11 +58,11 @@ RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
 
 # Install TeXLive
-ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
+ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz /tmp
 ADD texlive.profile .
-RUN tar -xzf install-tl-unx.tar.gz && \
+RUN tar -xzf /tmp/install-tl-unx.tar.gz && \
     cd install-tl-* &&  ./install-tl -profile /texlive.profile && cd - && \
-    rm -rf install-tl-unx.tar.gz install-tl-* texlive.profile && \
+    rm -rf /tmp/install-tl-unx.tar.gz install-tl-* texlive.profile && \
     /usr/local/texlive/2015/bin/x86_64-linux/tlmgr install \
           cmap fancybox titlesec framed fancyvrb threeparttable \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
