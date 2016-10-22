@@ -27,7 +27,7 @@ RUN source /opt/rh/devtoolset-2/enable && \
         -DLLVM_TARGETS_TO_BUILD=host \
         -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
         && \
-    make && \
+    make -j 4 && \
     make install/strip
 RUN rm -rf /llvm-3.8.1.src /tmp/llvm-3.8.1.src.tar.xz /tmp/cfe-3.8.1.src.tar.xz /llvm-build
 
