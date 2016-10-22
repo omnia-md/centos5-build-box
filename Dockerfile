@@ -1,4 +1,4 @@
-FROM jchodera/cuda80-amd30
+FROM jchodera/omnia-build-box:cuda80-amd30
 
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
@@ -17,6 +17,7 @@ RUN source /opt/rh/devtoolset-2/enable && \
         -DLLVM_TARGETS_TO_BUILD=host \
         -DGCC_INSTALL_PREFIX=/opt/rh/devtoolset-2/root/usr/ \
         && \
-    make -j 4 && \
+    NCORES=$(grep -c '^processor' /proc/cpuinfo) && \
+    make -j $NCORES && \
     make install/strip
 RUN rm -rf /llvm-3.8.1.src /tmp/llvm-3.8.1.src.tar.xz /tmp/cfe-3.8.1.src.tar.xz /llvm-build
