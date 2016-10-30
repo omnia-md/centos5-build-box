@@ -1,4 +1,4 @@
-FROM jchodera/omnia-build-box:cuda80-amd30
+FROM jchodera/omnia-build-box:cuda75-amd30
 
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
