@@ -50,3 +50,6 @@ RUN tar -xzf install-tl-unx.tar.gz && \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
           xstring
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
+
+# Install OpenGL headers and zip archiving support
+yum install -y --quiet mesa-libGL-devel zip
