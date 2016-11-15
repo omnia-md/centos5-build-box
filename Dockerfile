@@ -7,6 +7,9 @@ FROM phusion/holy-build-box-64
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
 
+# Make sure wget and zip installed
+RUN yum install -y --quiet wget zip
+
 # Install TeXLive
 ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
 ADD texlive.profile .
@@ -18,6 +21,3 @@ RUN tar -xzf install-tl-unx.tar.gz && \
           mdwtools wrapfig parskip upquote float multirow hyphenat caption \
           xstring
 ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
-
-# Install OpenGL headers and zip archiving support
-yum install -y --quiet mesa-libGL-devel zip
