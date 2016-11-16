@@ -1,6 +1,6 @@
-FROM phusion/holy-build-box-64
+FROM jchodera/omnia-build-box:texlive
 
-# Install TeX, CUDA 7.5, AMD APP SDK 3.0
+# Install CUDA 7.5, AMD APP SDK 3.0
 
 # CUDA requires dkms libvdpau
 # TeX installation requires wget
@@ -38,18 +38,3 @@ RUN rpm --quiet -i cuda-repo-rhel6-8-0-local-8.0.44-1.x86_64.rpm && \
 
 RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
-
-# Install TeXLive
-ADD http://ctan.mackichan.com/systems/texlive/tlnet/install-tl-unx.tar.gz .
-ADD texlive.profile .
-RUN tar -xzf install-tl-unx.tar.gz && \
-    cd install-tl-* &&  ./install-tl -profile /texlive.profile && cd - && \
-    rm -rf install-tl-unx.tar.gz install-tl-* texlive.profile && \
-    /usr/local/texlive/2015/bin/x86_64-linux/tlmgr install \
-          cmap fancybox titlesec framed fancyvrb threeparttable \
-          mdwtools wrapfig parskip upquote float multirow hyphenat caption \
-          xstring
-ENV PATH=/usr/local/texlive/2015/bin/x86_64-linux:$PATH
-
-# Install OpenGL headers and zip archiving support
-yum install -y --quiet mesa-libGL-devel zip
