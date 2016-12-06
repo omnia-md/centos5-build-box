@@ -4,7 +4,7 @@ RUN yum clean -y --quiet expire-cache && \
     yum clean -y --quiet all
 
 # Install clang 3.8.1
-RUN yum install -y --quiet xz
+RUN yum install --nogpgcheck -y --quiet xz
 ADD http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz /tmp
 RUN xzcat /tmp/llvm-3.8.1.src.tar.xz | tar xf -
 ADD http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz /tmp
