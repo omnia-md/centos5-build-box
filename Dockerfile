@@ -1,4 +1,4 @@
-FROM phusion/holy-build-box-64
+FROM phusion/holy-build-box-64:1.2.0
 
 #
 # Install TeX
